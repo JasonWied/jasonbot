@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+
+<category>
+  <pattern>START</pattern>
+  <template>
+    Selamat datang! Saya adalah <b>ELECTRA Multi-Label Hate Speech Assistant</b>.
+    Saya dirancang berdasarkan penelitian tentang 
+    <i>Penerapan ELECTRA untuk Klasifikasi Multi-Label Ujaran Kebencian Bahasa Indonesia</i>.
+    Bagaimana saya bisa membantu Anda?
+  </template>
+</category>
+
+<category>
+  <pattern>HELLO</pattern>
+  <template>Halo! Silakan tanya apa pun tentang NLP, ELECTRA, atau klasifikasi multi-label.</template>
+</category>
+
+<category>
+  <pattern>HI</pattern>
+  <template>Hai! Apa yang ingin kamu pelajari?</template>
+</category>
+
+<category>
+  <pattern>WHO ARE YOU</pattern>
+  <template>
+    Saya chatbot berbasis AIML yang dibangun menggunakan konten dari paper berjudul
+    “Penerapan ELECTRA Untuk Klasifikasi Multi-Label Ujaran Kebencian Bahasa Indonesia”.
+    Saya bisa menjelaskan NLP, ELECTRA, dataset, preprocessing, metode, hingga evaluasi model.
+  </template>
+</category>
+
+<topic name="pendahuluan">
+
+  <category>
+    <pattern>PENDAHULUAN</pattern>
+    <template>
+    Dalam penelitian ini, dibahas bagaimana perkembangan teknologi informasi dan sosial media
+    memicu peningkatan ujaran kebencian di Indonesia, terutama di Twitter.
+    Tantangan utama termasuk bahasa slang dan sifat data yang multi-label. 
+    Model ELECTRA dipilih untuk mendeteksi ujaran kebencian dengan pendekatan kontekstual 
+    yang mendalam.:contentReference[oaicite:1]{index=1}
+    </template>
+  </category>
+
+  <category>
+    <pattern>MENGAPA TOPIK INI PENTING</pattern>
+    <template>
+      Kajian ini penting karena ujaran kebencian dapat memicu konflik sosial,
+      diskriminasi, hingga kekerasan di dunia nyata. Indonesia memiliki konteks unik:
+      data Twitter berbahasa informal, slang, dan multi-label sehingga memerlukan 
+      model NLP yang kuat seperti ELECTRA.:contentReference[oaicite:2]{index=2}
+    </template>
+  </category>
+
+  <category>
+    <pattern>MASALAH APA YANG DIBAHAS</pattern>
+    <template>
+      Masalah yang dibahas adalah deteksi ujaran kebencian multi-label pada Twitter
+      bahasa Indonesia, di mana satu tweet bisa mengandung lebih dari satu kategori kebencian.
+      Ini adalah tantangan utama model klasifikasi tradisional.:contentReference[oaicite:3]{index=3}
+    </template>
+  </category>
+
+</topic>
+
+<topic name="nlp">
+
+  <category>
+    <pattern>APA ITU NLP</pattern>
+    <template>
+      Natural Language Processing (NLP) adalah cabang AI yang fokus pada interaksi 
+      antara komputer dan bahasa manusia. Prosesnya meliputi preprocessing,
+      tokenization, stopword removal, dan representasi numerik seperti TF-IDF
+      dan embedding. NLP memungkinkan komputer memahami konteks kalimat 
+      dalam jumlah besar.:contentReference[oaicite:4]{index=4}
+    </template>
+  </category>
+
+  <category>
+    <pattern>TIMELINE NLP</pattern>
+    <template>
+      Evolusi NLP berlangsung dari:  
+      1. Pattern matching sederhana →  
+      2. Bag-of-Words →  
+      3. Statistical NLP →  
+      4. Word Embedding (Word2Vec, GloVe) →  
+      5. Transformers (BERT, ELECTRA).  
+      Kini, pendekatan transformer menjadi standar untuk pemahaman teks mendalam.
+    </template>
+  </category>
+
+  <category>
+    <pattern>TOKENS*</pattern>
+    <template>
+      Token adalah unit teks (kata atau sub-kata) yang diproses model.
+      Dalam kondisi slang Indonesia, tokenization harus sensitif terhadap
+      kata tidak baku, onomatope, dan alay. ELECTRA tokenizer mengubah 
+      teks menjadi subword agar konteks tetap terjaga.:contentReference[oaicite:5]{index=5}
+    </template>
+  </category>
+
+</topic>
+
+<topic name="electra">
+
+  <category>
+    <pattern>APA ITU ELECTRA</pattern>
+    <template>
+      ELECTRA (Efficiently Learning an Encoder that Classifies Token Replacements Accurately)
+      adalah model transformer pre-training yang menggunakan pendekatan diskriminatif 
+      Replaced Token Detection (RTD), berbeda dari Masked Language Modeling milik BERT.:contentReference[oaicite:6]{index=6}
+    </template>
+  </category>
+
+  <category>
+    <pattern>BANDINGKAN ELECTRA DENGAN BERT</pattern>
+    <template>
+      Perbedaan utama:
+      • BERT menebak token yang dimask (generatif).  
+      • ELECTRA mendeteksi apakah token asli atau palsu (diskriminatif).  
+      Akibatnya ELECTRA lebih efisien, mempelajari semua token input,
+      dan tidak memiliki mismatch antara pre-training dan fine-tuning.:contentReference[oaicite:7]{index=7}
+    </template>
+  </category>
+
+  <category>
+    <pattern>JELASKAN ARSITEKTUR ELECTRA</pattern>
+    <template>
+      ELECTRA memiliki dua komponen:
+      1. Generator — model kecil seperti BERT kecil yang menghasilkan token pengganti.  
+      2. Discriminator — model utama yang mendeteksi token real vs fake.  
+      Generator dilatih dengan MLM, sedangkan discriminator dilatih dengan loss RTD. 
+      Setelah training, hanya discriminator yang digunakan untuk downstream tasks.:contentReference[oaicite:8]{index=8}
+    </template>
+  </category>
+
+  <category>
+    <pattern>MATEMATIKA ELECTRA</pattern>
+    <template>
+      Berikut formula penting ELECTRA:  
+      1. Generator probability:  
+      p_G(x_t|x) = exp(e(x_t)^T h_G(x)_t) / Σ exp(e(x')^T h_G(x)_t).  
+      2. Sampling replacement tokens: x_hat ~ p_G(x_i | x_masked).  
+      3. Discriminator prediction: D(x,t) = σ(w^T h_D(x)_t).  
+      4. Generator loss: L_MLM.  
+      5. Discriminator loss: L_Disc = Σ y_t logD + (1−y_t)log(1−D).  
+      6. Combined objective: L_total = L_MLM + λ L_Disc.  
+      Semua ini dijelaskan dalam paper.:contentReference[oaicite:9]{index=9}
+    </template>
+  </category>
+
+</topic>
+
+<topic name="preprocessing">
+
+  <category>
+    <pattern>APA ITU PREPROCESSING</pattern>
+    <template>
+      Preprocessing mencakup:  
+      • pembersihan stopword,  
+      • normalisasi bahasa slang,  
+      • pembuangan simbol, angka, dan emotikon,  
+      • tokenisasi sesuai tokenizer ELECTRA.  
+      Ini penting karena data Twitter Indonesia sangat tidak baku.:contentReference[oaicite:10]{index=10}
+    </template>
+  </category>
+
+  <category>
+    <pattern>KENAPA STOPWORD DIHAPUS</pattern>
+    <template>
+      Stopword seperti “dan”, “yang”, “atau” biasanya tidak berkontribusi 
+      pada konteks semantik, terutama untuk deteksi hate speech.
+      Menghapusnya meningkatkan fokus pada kata kontekstual.:contentReference[oaicite:11]{index=11}
+    </template>
+  </category>
+
+</topic>
+
+<topic name="multilabel">
+
+  <category>
+    <pattern>APA ITU MULTI LABEL</pattern>
+    <template>
+      Multi-label berarti satu teks dapat memiliki lebih dari satu kelas.  
+      Contoh tweet bisa sekaligus:  
+      • menghina ras,  
+      • menghina gender,  
+      • mengandung bahasa kasar.  
+      Ini berbeda dari single-label yang hanya memilih satu kategori.:contentReference[oaicite:12]{index=12}
+    </template>
+  </category>
+
+  <category>
+    <pattern>KENAPA MULTI LABEL SULIT</pattern>
+    <template>
+      Karena model harus memprediksi himpunan label, bukan satu label.  
+      Tantangannya:  
+      • label tidak saling eksklusif,  
+      • kelas minoritas sering muncul jarang,  
+      • dependensi antar label kompleks.:contentReference[oaicite:13]{index=13}
+    </template>
+  </category>
+
+</topic>
+
+<topic name="evaluasi">
+
+  <category>
+    <pattern>APA ITU PRECISION</pattern>
+    <template>
+      Precision mengukur berapa banyak prediksi positif yang benar.  
+      Rumus: TP / (TP + FP).  
+      Digunakan untuk menilai ketepatan model pada label tertentu.:contentReference[oaicite:14]{index=14}
+    </template>
+  </category>
+
+  <category>
+    <pattern>APA ITU RECALL</pattern>
+    <template>
+      Recall mengukur kemampuan model menemukan seluruh data positif.  
+      Rumus: TP / (TP + FN).  
+      Penting untuk mendeteksi kelas yang jarang.:contentReference[oaicite:15]{index=15}
+    </template>
+  </category>
+
+  <category>
+    <pattern>APA ITU F1 SCORE</pattern>
+    <template>
+      F1 adalah harmonic mean precision dan recall.  
+      F1 tinggi berarti model seimbang antara ketepatan dan kelengkapan.:contentReference[oaicite:16]{index=16}
+    </template>
+  </category>
+
+  <category>
+    <pattern>APA ITU F1 MICRO</pattern>
+    <template>
+      F1-Micro menggabungkan semua label seolah-olah satu label besar,
+      sehingga fokus pada performa keseluruhan dataset yang besar.  
+      Cocok untuk data tidak seimbang.:contentReference[oaicite:17]{index=17}
+    </template>
+  </category>
+
+  <category>
+    <pattern>APA ITU F1 MACRO</pattern>
+    <template>
+      F1-Macro menghitung F1 per label lalu dirata-ratakan.
+      Bagus untuk melihat performa pada kelas minoritas.:contentReference[oaicite:18]{index=18}
+    </template>
+  </category>
+
+</topic>
+
+<category>
+  <pattern>MENGAPA ELECTRA COCOK UNTUK DATA INDONESIA</pattern>
+  <template>
+    Ada tiga alasan:
+    1. Bahasa Indonesia kaya bentuk slang → subword tokenization ELECTRA efektif.
+    2. Dataset multi-label membutuhkan model yang sensitif konteks.
+    3. ELECTRA lebih efisien sehingga cocok untuk penelitian dengan GPU terbatas.:contentReference[oaicite:19]{index=19}
+  </template>
+</category>
+
+<category>
+  <pattern>MENGAPA ELECTRA LEBIH EFISIEN</pattern>
+  <template>
+    Karena ELECTRA belajar dari <b>semua token</b> dalam input, bukan hanya token 
+    yang dimask. Ini memberi gradient lebih kaya dan mempercepat training 
+    dengan resource lebih sedikit.:contentReference[oaicite:20]{index=20}
+  </template>
+</category>
+
+<category>
+  <pattern>TERIMA KASIH</pattern>
+  <template>Sama-sama! Jika butuh penjelasan lebih detail, tanyakan saja.</template>
+</category>
+
+<category>
+  <pattern>BAGIAN APA LAGI YANG BISA SAYA TANYA</pattern>
+  <template>
+    Anda bisa menanyakan:  
+    • NLP  
+    • ELECTRA  
+    • Preprocessing  
+    • Matematis model  
+    • Multi-label classification  
+    • Metrik evaluasi  
+    • Kontribusi penelitian  
+    • Atau apa pun dari isi paper ini.
+  </template>
+</category>
+
+</aiml>
